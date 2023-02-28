@@ -69,10 +69,10 @@ const botInit = async () => {
     bot.command(['new', 'reset'], async (ctx) => {
         try{
             const msgListToBeDeleted = await fetchAllMSGs(ctx);
+            await deleteAllMSGs(ctx);
             for(let i = 0; i < msgListToBeDeleted.length; i++) {
                 await ctx.deleteMessage(msgListToBeDeleted[i].msgID);
             }
-            deleteAllMSGs(ctx);
         } catch (error) {
             handleError(error, ctx, errorAlert);
         }
