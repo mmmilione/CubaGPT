@@ -1,5 +1,5 @@
 import {Telegraf} from "telegraf";
-import { addUser, deleteAllMSGs, deleteUser, fetchAllMSGs, lastMSG, saveMSG } from "../models/handleData.js";
+import { addUser, deleteAllMSGs, deleteUser, fetchAllMSGs, saveMSG } from "../models/handleData.js";
 import generateReplay from "../ai/useOpenAi.js";
 import { isAllowed, isAdmin } from "./accessControl.js";
 import { errorAlert, help, notAllowed, welcome, added, cancelled } from "./texts.js";
@@ -26,6 +26,7 @@ const botInit = async () => {
         }
     });
 
+    //Start Command
     bot.start(async (ctx) => {
         try{
             const sendReply = await ctx.reply(welcome);
@@ -35,6 +36,7 @@ const botInit = async () => {
         }
     });
 
+    //HELP Command
     bot.help(async (ctx) => {
         try {
             const sendReply = await ctx.reply(help);
@@ -44,6 +46,7 @@ const botInit = async () => {
         } 
     });
 
+    //Admin Whitelists a user
     bot.command('user', isAdmin, async (ctx) => {
         try {
             console.log(ctx.message.text);
@@ -55,6 +58,7 @@ const botInit = async () => {
         }
     });
 
+    //Admin blocks a user
     bot.command('delete', isAdmin, async (ctx) => {
         try {
             console.log(ctx.message.text);
@@ -66,18 +70,18 @@ const botInit = async () => {
         }
     });
     
+    //User resets old conversation
     bot.command(['new', 'reset'], async (ctx) => {
         try{
             const msgListToBeDeleted = await fetchAllMSGs(ctx);
             await deleteAllMSGs(ctx);
-            for(let i = 0; i < msgListToBeDeleted.length; i++) {
-                await ctx.deleteMessage(msgListToBeDeleted[i].msgID);
-            }
+            const sendReply = await ctx.reply("Ya puedes empezar a hablar de otro tema. Si quieres, puedes tambien limpiar el chat.");
         } catch (error) {
             handleError(error, ctx, errorAlert);
         }
     });
 
+    //Send MSG to AI
     bot.on('message', async (ctx) => {
         try {
             
@@ -85,10 +89,10 @@ const botInit = async () => {
             ctx.sendChatAction('typing');
 
             //Fetch previous AI answer for context and use it to create new answer
-            const previousAnswer = await lastMSG(ctx);
-            console.log("Previous ANSWER: ", previousAnswer);
-            const aiReply = await generateReplay(ctx.message.text, previousAnswer);
-            
+            const previousAnswers = await fetchAllMSGs(ctx);
+            console.log("Previous msgs: ", previousAnswers);
+            const aiReply = await generateReplay(ctx.message.text, previousAnswers);
+            console.log("Text in TELEGRAM route: ", aiReply);
             //Send Reply and Save it in DB
             const sendReply = await ctx.reply(aiReply);
             saveMSG(ctx, aiReply, sendReply.message_id, true);
