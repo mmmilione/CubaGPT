@@ -1,14 +1,14 @@
 # CUBAGPT #
 
-This is the source code of the [CubaGPT Telegram BOT](https://t.me/Chat_GPT_Cuban_Bot), which allows people to interact with a ChatGPT-like AI model through a Telegram bot.
+This is the source code of the [CubaGPT Telegram BOT](https://t.me/Chat_GPT_Cuban_Bot), which allows people to interact with a ChatGPT through a Telegram bot.
 
-The user sends prompts to ChatGPT in the form of text messages sent to the Telegram BOT. In turn, the Telegram BOT gets the user's input and passes it to ChatGPT in the background.
+This project uses the gpt-3.5-turbo model of OpenAI under the hood.
 
-In fact, the prompt is not passed as it is. In order to improve the quality of AI responses, some prompt manipulation is performed on users' messages, to add relevant context to it. 
+The user sends prompts to ChatGPT in the form of text messages sent to the Telegram BOT. In turn, the Telegram BOT gets the user's input and passes it to ChatGPT API in the background. When the AI sends back a reply, this is forwarded back to the user.
 
-This result is achieved by storing messages in MongoDB, which are used to perform some minor prompt engeneering. The last reply of the AI in the conversation at hand is fetched by the server and added to the user's message before quering the AI model. 
+In order to improve the quality of AI responses, some prompt manipulation is performed on users' messages. All the messages that make up a certain conversation, are stored in MongoDB, so that they can be retrived as needed to provide the AI with the context of the conversation.
 
-By using the bot command `/reset`, the user can cancel the conversation, so that the old context doesn't mess up the new conversation on a different topic.
+By using the bot commands `/reset` or `/new`, the user can cancel the conversation, so that the old context doesn't mess up a new conversation on a different topic.
 
 The Bot's Admin can also regulate access to the Bot. Access can be open to everyone, or can be regulated through a whitelist of Telegram aliases (which is store in MongoDB). This functionality is regulated by the `ISFREEACCESS` property in the `.env` file.
 
@@ -34,8 +34,6 @@ CONNECTION=my_connection_string_to_MongoDB
 
 ## DISCLAIMERS: ## 
 
-The API of ChatGPT is not open to the public. This project uses the DaVinci003 model of OpenAI and adds context to users' prompts to achieve similar results.
-
-AI language models create credible answers, but these answers are not necessarily always correct. In fact, the Bot's answers can be biased, misleading or plain wrong.
+AI language models create credible answers, but these answers are not necessarily correct all the time. In fact, the Bot's answers can be biased, misleading or plain wrong.
 
 

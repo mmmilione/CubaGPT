@@ -1,7 +1,41 @@
 import { Configuration, OpenAIApi } from "openai";
 import { greet, noEntiendo } from "../telegram/texts.js";
 
-const generateReplay = async (prompt, lastAnswer) => {
+const compileMessages = (query, chatHistory) => {
+    const sysMSG = {
+        role: "system", 
+        content: "You are a helpful assistant. Your objective is to reply to the user's questions."
+    };
+
+    let messages = [ sysMSG ];
+
+    chatHistory.forEach(chat => {
+        if(
+            !chat.msg.includes('/new') || 
+            !chat.msg.includes('/reset') || 
+            !chat.msg.includes('/start') ||
+            !chat.msg.includes('/help') ||
+            !chat.msg.includes('/user') ||
+            !chat.msg.includes('/delete')
+        ) {
+            const chatObj = {
+                role: chat.isAIgenerated == true ? "assistant" : "user",
+                content: chat.msg
+            }
+            messages.push(chatObj);
+        }
+        
+    })
+
+    messages.push({
+        role: "user", 
+        content: query
+    });
+
+    return messages;
+}
+
+const generateReplay = async (prompt, lastAnswers) => {
     try {
 
         //Greet without bothering the AI
@@ -18,31 +52,25 @@ const generateReplay = async (prompt, lastAnswer) => {
         
         //const spanishPrompt = `${prompt}. Contestar en español`;
         const configuration = new Configuration({
-            organization: "org-JibDNApCUHGDIK54ohrrUWyE",
             apiKey: process.env.API_KEY_OPENAI
         });
     
         const openai = new OpenAIApi(configuration);
 
-        const query = `${lastAnswer} ${prompt}`;
+        let completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: compileMessages(prompt, lastAnswers)
+        });
 
-        const params = {
-            model: "text-davinci-003",
-            prompt: query,
-            //prompt: prompt,
-            max_tokens: 1000,
-            temperature: 0.9,
-            frequency_penalty: 0.5
-        };
+        console.log("MSG to be sent to user: ", )
+        console.log(completion.data.choices[0].message.content);
 
-        const aiResponse = await openai.createCompletion(params);
-
-        let text = aiResponse.data.choices[0].text;
-
+        let text = completion.data.choices[0].message.content;
+        
         if(text.includes("leaves a message telling the user he does not know the answer")){
             text = 'No Entiendo. Puedes esplicarmelo mejor, por favor?';
         }
-
+        console.log("TEXT in Generate Reply: ", text)
         return text;
 
     } catch (error) {

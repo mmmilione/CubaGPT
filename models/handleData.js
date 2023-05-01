@@ -42,18 +42,6 @@ const deleteAllMSGs = async (ctx) => {
     }
 }
 
-const lastMSG = async (ctx) => {
-    try {
-        const query = { userID: ctx.message.from.id, isAIgenerated: true };
-        const answer = await Messages.findOne(query).sort({time: -1});
-        if(!answer) return '';
-        return answer.msg;
-    } catch (error) {
-        console.log(error);
-        return '';
-    }
-}
-
 const addUser = async (username) => {
 
     try {
@@ -85,4 +73,4 @@ const deleteUser = async (username) => {
     }
 }
 
-export { saveMSG, deleteAllMSGs, lastMSG, fetchAllMSGs, addUser, deleteUser };
+export { saveMSG, deleteAllMSGs, fetchAllMSGs, addUser, deleteUser };
