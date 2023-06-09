@@ -89,7 +89,7 @@ const botInit = async () => {
             //Show Typing to user
             ctx.sendChatAction('typing');
 
-            if(ctx.message.text.includes('--image')) {
+            if(ctx.message.text.includes('-image')) {
                 console.log("About to generate an image with DALL-E");
                 const url = await generateImgUrl(ctx.message.text);
                 console.log(url);

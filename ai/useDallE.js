@@ -8,7 +8,7 @@ const generateImgUrl = async (prompt) => {
         });
         const openai = new OpenAIApi(configuration);
         const res = openai.createImage({
-            prompt: prompt.replace(/--image/, ''),
+            prompt: prompt.replace(/-image/, ''),
             n: 1,
             size: "512x512"
         });

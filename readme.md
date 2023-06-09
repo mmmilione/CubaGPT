@@ -10,7 +10,7 @@ In order to improve the quality of AI responses, some prompt manipulation is per
 
 By using the bot commands `/reset` or `/new`, the user can cancel the conversation, so that the old context doesn't mess up a new conversation on a different topic.
 
-You can also generate images using DALL-E. In order to do that is sufficient to send to the bot a message that contains the description of the image, preceded by `--image`. 
+You can also generate images using DALL-E. In order to do that is sufficient to send to the bot a message that contains the description of the image, preceded by `-image`. 
 
 The Bot's Admin can also regulate access to the Bot. Access can be open to everyone, or can be regulated through a whitelist of Telegram aliases (which is store in MongoDB). This functionality is regulated by the `ISFREEACCESS` property in the `.env` file.
 
