@@ -4,6 +4,7 @@ import generateReplay from "../ai/useOpenAi.js";
 import { isAllowed, isAdmin } from "./accessControl.js";
 import { errorAlert, help, notAllowed, welcome, added, cancelled } from "./texts.js";
 import handleError from "./handleError.js";
+import generateImgUrl from "../ai/useDallE.js";
 
 const botInit = async () => {
     
@@ -87,6 +88,13 @@ const botInit = async () => {
             
             //Show Typing to user
             ctx.sendChatAction('typing');
+
+            if(ctx.message.text.includes('--image')) {
+                console.log("About to generate an image with DALL-E");
+                const url = await generateImgUrl(ctx.message.text);
+                console.log(url);
+                return ctx.reply(url);
+            }
 
             //Fetch previous AI answer for context and use it to create new answer
             const previousAnswers = await fetchAllMSGs(ctx);

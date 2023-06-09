@@ -75,7 +75,7 @@ const generateReplay = async (prompt, lastAnswers) => {
 
     } catch (error) {
         console.log(error);
-        return "AI Failed";
+        return "AI Failed.\n Usar el comando /reset y luego intentar de nuevo";
     }
     
 }
